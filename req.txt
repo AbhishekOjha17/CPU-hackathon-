@@ -1,0 +1,9 @@
+librosa
+soundfile
+pyannote.audio
+openai-whisper
+transformers
+sentence-transformers
+numpy
+scikit-learn
+nltk

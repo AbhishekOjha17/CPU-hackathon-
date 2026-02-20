@@ -1,0 +1,22 @@
+{
+  "stress_level_score": 0.8587286019821961,
+  "emotional_volatility_score": 0.0001909103447246803,
+  "impulsivity_indicator": 0.266352227393617,
+  "desperation_index": 0.7308328527508052,
+  "confidence_level_score": 0.9760805070400238,
+  "financial_literacy_score": 0.3333333333333333,
+  "risk_awareness_score": 0.1875,
+  "planning_orientation_score": 0.1875,
+  "sentiment_stability_score": 0.9760805070400238,
+  "clarity_of_purpose_score": 0.4880402535200119,
+  "decision_consistency_score": 1.0,
+  "honesty_consistency_score": 1.0,
+  "evasiveness_score": 0.0,
+  "negotiation_behavior_score": 0.25,
+  "long_term_commitment_signal": 0.2857142857142857,
+  "early_repayment_interest_flag": 0.0,
+  "detected_customer": "SPEAKER_00",
+  "customer_confidence": 1.0,
+  "detected_banker": "SPEAKER_01",
+  "intent_risk_score": 0.47071923680995337
+}
