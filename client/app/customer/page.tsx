@@ -57,6 +57,25 @@ interface UploadResponse {
   };
   risk_analysis: RiskAnalysis;
   application_id: string;
+  user_features_used?: boolean;
+}
+
+interface UserFeatures {
+  monthly_income: number;
+  employment_type: string;
+  years_in_current_job: number;
+  existing_emi_obligations: number;
+  loan_amount_requested: number;
+  loan_purpose: string;
+  credit_score: number;
+  marital_status: string;
+  dependents_count: number;
+  education_level: string;
+  residence_type: string;
+  age: number;
+  co_applicant_income: number;
+  property_type: string;
+  loan_term: number;
 }
 
 export default function CustomerPage() {
@@ -66,7 +85,17 @@ export default function CustomerPage() {
   const [uploadProgress, setUploadProgress] = useState<number>(0);
   const [result, setResult] = useState<UploadResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [showForm, setShowForm] = useState<boolean>(false);
+  const [userFeatures, setUserFeatures] = useState<Partial<UserFeatures>>({});
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Employment type options
+  const employmentTypes = ['Salaried', 'Self-Employed', 'Business Owner', 'Freelancer', 'Retired', 'Unemployed'];
+  const loanPurposes = ['Home Loan', 'Car Loan', 'Personal Loan', 'Education Loan', 'Business Loan', 'Debt Consolidation'];
+  const maritalStatuses = ['Single', 'Married', 'Divorced', 'Widowed'];
+  const educationLevels = ['High School', 'Graduate', 'Post Graduate', 'Doctorate', 'Professional'];
+  const residenceTypes = ['Owned', 'Rented', 'Mortgaged', 'Living with Family'];
+  const propertyTypes = ['Apartment', 'Independent House', 'Villa', 'Commercial', 'Land'];
 
   const handleDragEnter = useCallback((e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -106,6 +135,13 @@ export default function CustomerPage() {
     setFiles(prev => prev.filter((_, i) => i !== index));
   }, []);
 
+  const handleInputChange = (field: keyof UserFeatures, value: string | number) => {
+    setUserFeatures(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
   const handleUpload = async () => {
     if (files.length === 0) {
       setError('Please select at least one file');
@@ -121,6 +157,12 @@ export default function CustomerPage() {
     files.forEach(file => {
       formData.append('files', file);
     });
+
+    // Add user features if any are filled
+    const hasFeatures = Object.keys(userFeatures).length > 0;
+    if (hasFeatures) {
+      formData.append('user_features', JSON.stringify(userFeatures));
+    }
 
     const progressInterval = setInterval(() => {
       setUploadProgress(prev => {
@@ -210,6 +252,233 @@ export default function CustomerPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Left Column - Upload Section */}
           <div className="space-y-6">
+            {/* Toggle Form Button */}
+            <button
+              onClick={() => setShowForm(!showForm)}
+              className="text-sm text-gray-600 hover:text-gray-900 flex items-center"
+            >
+              <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+              </svg>
+              {showForm ? 'Hide' : 'Show'} additional details form
+            </button>
+
+            {/* User Features Form */}
+            {showForm && (
+              <div className="border border-gray-200 rounded-lg p-6 bg-gray-50">
+                <h3 className="text-md font-medium text-gray-900 mb-4">Tell us more about yourself</h3>
+                <p className="text-xs text-gray-500 mb-4">This helps us provide more accurate assessment</p>
+                
+                <div className="space-y-4 max-h-96 overflow-y-auto pr-2">
+                  {/* Monthly Income */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Monthly Income (₹)</label>
+                    <input
+                      type="number"
+                      value={userFeatures.monthly_income || ''}
+                      onChange={(e) => handleInputChange('monthly_income', parseFloat(e.target.value))}
+                      className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+                      placeholder="e.g., 50000"
+                    />
+                  </div>
+
+                  {/* Employment Type */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Employment Type</label>
+                    <select
+                      value={userFeatures.employment_type || ''}
+                      onChange={(e) => handleInputChange('employment_type', e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+                    >
+                      <option value="">Select</option>
+                      {employmentTypes.map(type => (
+                        <option key={type} value={type}>{type}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Years in Current Job */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Years in Current Job</label>
+                    <input
+                      type="number"
+                      value={userFeatures.years_in_current_job || ''}
+                      onChange={(e) => handleInputChange('years_in_current_job', parseFloat(e.target.value))}
+                      className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+                      placeholder="e.g., 3"
+                      step="0.5"
+                    />
+                  </div>
+
+                  {/* Existing EMI Obligations */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Existing EMI Obligations (₹/month)</label>
+                    <input
+                      type="number"
+                      value={userFeatures.existing_emi_obligations || ''}
+                      onChange={(e) => handleInputChange('existing_emi_obligations', parseFloat(e.target.value))}
+                      className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+                      placeholder="e.g., 10000"
+                    />
+                  </div>
+
+                  {/* Loan Amount Requested */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Loan Amount Requested (₹)</label>
+                    <input
+                      type="number"
+                      value={userFeatures.loan_amount_requested || ''}
+                      onChange={(e) => handleInputChange('loan_amount_requested', parseFloat(e.target.value))}
+                      className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+                      placeholder="e.g., 500000"
+                    />
+                  </div>
+
+                  {/* Loan Purpose */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Loan Purpose</label>
+                    <select
+                      value={userFeatures.loan_purpose || ''}
+                      onChange={(e) => handleInputChange('loan_purpose', e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+                    >
+                      <option value="">Select</option>
+                      {loanPurposes.map(purpose => (
+                        <option key={purpose} value={purpose}>{purpose}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Credit Score */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Credit Score (CIBIL)</label>
+                    <input
+                      type="number"
+                      value={userFeatures.credit_score || ''}
+                      onChange={(e) => handleInputChange('credit_score', parseFloat(e.target.value))}
+                      className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+                      placeholder="e.g., 750"
+                      min="300"
+                      max="900"
+                    />
+                  </div>
+
+                  {/* Marital Status */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Marital Status</label>
+                    <select
+                      value={userFeatures.marital_status || ''}
+                      onChange={(e) => handleInputChange('marital_status', e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+                    >
+                      <option value="">Select</option>
+                      {maritalStatuses.map(status => (
+                        <option key={status} value={status}>{status}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Dependents Count */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Number of Dependents</label>
+                    <input
+                      type="number"
+                      value={userFeatures.dependents_count || ''}
+                      onChange={(e) => handleInputChange('dependents_count', parseInt(e.target.value))}
+                      className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+                      placeholder="e.g., 2"
+                      min="0"
+                    />
+                  </div>
+
+                  {/* Education Level */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Education Level</label>
+                    <select
+                      value={userFeatures.education_level || ''}
+                      onChange={(e) => handleInputChange('education_level', e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+                    >
+                      <option value="">Select</option>
+                      {educationLevels.map(level => (
+                        <option key={level} value={level}>{level}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Residence Type */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Residence Type</label>
+                    <select
+                      value={userFeatures.residence_type || ''}
+                      onChange={(e) => handleInputChange('residence_type', e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+                    >
+                      <option value="">Select</option>
+                      {residenceTypes.map(type => (
+                        <option key={type} value={type}>{type}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Age */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Age</label>
+                    <input
+                      type="number"
+                      value={userFeatures.age || ''}
+                      onChange={(e) => handleInputChange('age', parseInt(e.target.value))}
+                      className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+                      placeholder="e.g., 35"
+                      min="18"
+                      max="100"
+                    />
+                  </div>
+
+                  {/* Co-applicant Income */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Co-applicant Income (₹/month)</label>
+                    <input
+                      type="number"
+                      value={userFeatures.co_applicant_income || ''}
+                      onChange={(e) => handleInputChange('co_applicant_income', parseFloat(e.target.value))}
+                      className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+                      placeholder="e.g., 25000"
+                    />
+                  </div>
+
+                  {/* Property Type */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Property Type</label>
+                    <select
+                      value={userFeatures.property_type || ''}
+                      onChange={(e) => handleInputChange('property_type', e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+                    >
+                      <option value="">Select</option>
+                      {propertyTypes.map(type => (
+                        <option key={type} value={type}>{type}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Loan Term */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Loan Term (months)</label>
+                    <input
+                      type="number"
+                      value={userFeatures.loan_term || ''}
+                      onChange={(e) => handleInputChange('loan_term', parseInt(e.target.value))}
+                      className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+                      placeholder="e.g., 240"
+                      min="12"
+                      max="360"
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Upload Area */}
             <div
               className={`border-2 border-dashed rounded-lg p-8 ${
@@ -328,6 +597,9 @@ export default function CustomerPage() {
                 <div className="border border-gray-200 rounded-lg">
                   <div className="px-6 py-4 bg-gray-50 border-b border-gray-200">
                     <h2 className="text-lg font-medium text-gray-900">Application Status</h2>
+                    {result.user_features_used && (
+                      <span className="text-xs text-green-600 mt-1 block">✓ Using your provided information</span>
+                    )}
                   </div>
                   
                   <div className="p-6">

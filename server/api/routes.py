@@ -1,9 +1,9 @@
 import os
 import uuid
 import shutil
-from fastapi import APIRouter, UploadFile, File, HTTPException, BackgroundTasks
+from fastapi import APIRouter, UploadFile, File, HTTPException, BackgroundTasks, Form
 from fastapi.responses import JSONResponse
-from typing import List
+from typing import List, Optional
 import aiofiles
 import json
 
@@ -106,20 +106,38 @@ async def upppp():
                 
                 
                 
-                
 @router.post("/upload", response_model=UploadResponse)
-async def upload_files(files: List[UploadFile] = File(...)):
+async def upload_files(
+    files: List[UploadFile] = File(...),
+    user_features: Optional[str] = Form(None)  # Optional JSON string of user-provided features
+):
     """
     Upload files for RAG processing and ML prediction
+    Optionally accepts user-provided features as JSON string
     """
     import traceback
     from datetime import timezone
+    import json
     
     request_id = str(uuid.uuid4())[:8]
     
     print(f"\n{'='*60}")
     print(f"📤 [{request_id}] Processing {len(files)} uploaded files...")
     print('='*60)
+    
+    # Parse user features if provided
+    user_provided_features = {}
+    if user_features:
+        try:
+            user_provided_features = json.loads(user_features)
+            print(f"📝 [{request_id}] Received {len(user_provided_features)} user-provided features")
+            # Log the features (without sensitive data)
+            safe_features = {k: v for k, v in user_provided_features.items() 
+                           if k not in ['pan_number', 'aadhar_number', 'phone']}
+            print(f"   Features: {safe_features}")
+        except json.JSONDecodeError as e:
+            print(f"⚠️ [{request_id}] Failed to parse user features: {e}")
+            # Continue without user features
     
     if not files:
         raise HTTPException(status_code=400, detail="No files provided")
@@ -198,6 +216,35 @@ async def upload_files(files: List[UploadFile] = File(...)):
         prediction = {}
         features = {}
     
+    # ===== MERGE USER FEATURES WITH EXTRACTED FEATURES =====
+    if user_provided_features:
+        print(f"\n🔄 [{request_id}] Merging user-provided features with extracted features...")
+        # Define which features users can override (15 key features)
+        override_features = [
+            "monthly_income", "employment_type", "years_in_current_job",
+            "existing_emi_obligations", "loan_amount_requested", "loan_purpose",
+            "credit_score", "marital_status", "dependents_count",
+            "education_level", "residence_type", "age",
+            "co_applicant_income", "property_type", "loan_term"
+        ]
+        
+        updates_made = 0
+        for feature in override_features:
+            if feature in user_provided_features and user_provided_features[feature] is not None:
+                old_value = features.get(feature, 'Not found')
+                new_value = user_provided_features[feature]
+                features[feature] = new_value
+                updates_made += 1
+                print(f"   ✅ Updated {feature}: {old_value} -> {new_value}")
+        
+        print(f"   ✅ Updated {updates_made} features with user-provided values")
+        
+        # Re-run prediction with updated features
+        print(f"\n🔄 [{request_id}] Re-running prediction with updated features...")
+        rag_engine.extracted_features = features
+        prediction = rag_engine.predict_loan_risk()
+        print(f"   ✅ Updated prediction: {prediction.get('risk_level', 'Unknown')}")
+    
     # Generate what-if scenarios
     try:
         print(f"\n🧠 [{request_id}] Generating what-if scenarios...")
@@ -252,6 +299,8 @@ async def upload_files(files: List[UploadFile] = File(...)):
                 "file_errors": file_errors if file_errors else None,
                 "chunks_added": chunks_added,
                 "extracted_features": features,
+                "user_provided_features": user_provided_features if user_provided_features else None,
+                "features_merged": bool(user_provided_features),
                 "prediction_result": prediction,
                 "what_if_scenarios": what_if_scenarios,
                 "risk_analysis": risk_analysis,
@@ -319,6 +368,8 @@ async def upload_files(files: List[UploadFile] = File(...)):
     else:
         print(f"   • No prediction available")
     print(f"   • Features Extracted: {len(features)}")
+    if user_provided_features:
+        print(f"   • User Features: {len(user_provided_features)}")
     print(f"   • Files Processed: {len(saved_files)}/{len(files)}")
     if file_errors:
         print(f"   • Files with Errors: {len(file_errors)}")
@@ -330,12 +381,20 @@ async def upload_files(files: List[UploadFile] = File(...)):
         files_uploaded=len(saved_files),
         chunks_added=chunks_added,
         files=file_names,
-        prediction=prediction,
+        prediction={
+            "risk_level": prediction.get('risk_level', 'Unknown'),
+            "probability": prediction.get('probability', 0)
+        },
         features_extracted=len(features),
         what_if_scenarios=what_if_scenarios,
         risk_analysis=risk_analysis,
-        application_id=application_id
+        application_id=application_id,
+        user_features_used=bool(user_provided_features)
     )
+
+
+
+
 
 async def generate_what_if_scenarios(features: Dict[str, Any], prediction: Dict[str, Any]) -> Dict[str, Any]:
     """
