@@ -107,7 +107,6 @@ async def upppp():
                 
                 
                 
-
 @router.post("/upload", response_model=UploadResponse)
 async def upload_files(files: List[UploadFile] = File(...)):
     """
@@ -209,6 +208,16 @@ async def upload_files(files: List[UploadFile] = File(...)):
         print(f"   🔍 Traceback: {traceback.format_exc()}")
         what_if_scenarios = {"logical_scenarios": [], "llm_scenarios": [], "combined_recommendations": []}
     
+    # Generate detailed risk analysis
+    try:
+        print(f"\n🔬 [{request_id}] Generating detailed risk analysis...")
+        risk_analysis = await generate_risk_analysis(features, prediction, request_id)
+        print(f"   ✅ Risk analysis generated successfully")
+    except Exception as e:
+        print(f"   ❌ Risk analysis generation failed: {e}")
+        print(f"   🔍 Traceback: {traceback.format_exc()}")
+        risk_analysis = get_fallback_risk_analysis(features, prediction)
+    
     # Generate application ID
     application_id = str(uuid.uuid4())
     
@@ -237,7 +246,7 @@ async def upload_files(files: List[UploadFile] = File(...)):
             loan_application = {
                 "application_id": application_id,
                 "request_id": request_id,
-                "created_at": datetime.now(timezone.utc),  # Fixed: use timezone-aware UTC
+                "created_at": datetime.now(timezone.utc),
                 "files_processed": file_names,
                 "file_paths": saved_files,
                 "file_errors": file_errors if file_errors else None,
@@ -245,6 +254,7 @@ async def upload_files(files: List[UploadFile] = File(...)):
                 "extracted_features": features,
                 "prediction_result": prediction,
                 "what_if_scenarios": what_if_scenarios,
+                "risk_analysis": risk_analysis,
                 "features_count": len(features),
                 "mongo_save_status": "attempted"
             }
@@ -323,9 +333,9 @@ async def upload_files(files: List[UploadFile] = File(...)):
         prediction=prediction,
         features_extracted=len(features),
         what_if_scenarios=what_if_scenarios,
+        risk_analysis=risk_analysis,
         application_id=application_id
     )
-
 
 async def generate_what_if_scenarios(features: Dict[str, Any], prediction: Dict[str, Any]) -> Dict[str, Any]:
     """
@@ -708,6 +718,187 @@ def merge_scenarios(logical_scenarios: List[Dict], llm_scenarios: List[Dict]) ->
     
     return all_scenarios[:10]  # Return top 10 scenarios
 
+
+
+
+
+
+
+async def generate_risk_analysis(features: Dict[str, Any], prediction: Dict[str, Any], request_id: str) -> Dict[str, Any]:
+    """
+    Generate detailed risk analysis about which profiles are more likely to default
+    and what economic factors could impact repayment capability
+    """
+    
+    # Prepare comprehensive features for analysis
+    risk_features = {k: v for k, v in features.items() 
+                    if k in [
+                        "employment_type", "occupation_type", "monthly_income", 
+                        "years_in_current_job", "total_work_experience_years",
+                        "income_volatility_index", "income_growth_rate_3years",
+                        "salary_credit_regularity", "job_change_frequency",
+                        "employer_sector_risk_score", "debt_to_income_ratio",
+                        "existing_emi_obligations", "credit_score", 
+                        "past_defaults_count", "loan_amount_requested",
+                        "loan_purpose", "loan_term_months", "interest_rate",
+                        "family_dependency_ratio", "cost_of_living_index",
+                        "region_economic_risk_score", "region_default_rate_index",
+                        "urban_rural_indicator", "local_employment_stability_index",
+                        "business_vintage_years", "external_risk_score_1"
+                    ]}
+    
+    prompt = f"""You are a senior credit risk analyst. Provide a detailed analysis of this loan applicant's vulnerability to default, focusing on:
+
+1. **PROFESSION-SPECIFIC RISKS**: How their profession/industry affects repayment capacity
+   - For salaried: Job stability, industry health, automation risk
+   - For self-employed: Business cycle vulnerability, revenue consistency
+   - For gig economy: Income volatility, career longevity
+
+2. **INCOME TRAJECTORY IMPACT**: 
+   - If income is declining → how quickly will repayment become difficult?
+   - If income is volatile → probability of missed payments during low periods
+
+3. **MACROECONOMIC SENSITIVITY**:
+   - How would recession impact this applicant?
+   - How would industry downturns affect them?
+   - Interest rate hike sensitivity
+
+Current Applicant Profile:
+{json.dumps(risk_features, indent=2)}
+
+Current Risk Assessment:
+- Risk Level: {prediction.get('risk_level', 'Unknown')}
+- Default Probability: {prediction.get('probability', 0):.2%}
+
+Return a JSON with this exact structure:
+{{
+    "professional_risk": {{
+        "category": "salaried/self-employed/gig/other",
+        "industry_health": "stable/declining/growing",
+        "income_stability_score": "0-100",
+        "specific_concerns": ["concern1", "concern2"],
+        "future_outlook": "positive/neutral/negative"
+    }},
+    "income_trajectory_analysis": {{
+        "trend": "increasing/stable/declining/volatile",
+        "stress_scenarios": [
+            {{
+                "scenario": "10% income drop",
+                "impact": "description",
+                "risk_level": "low/medium/high"
+            }},
+            {{
+                "scenario": "20% income drop", 
+                "impact": "description",
+                "risk_level": "low/medium/high"
+            }},
+            {{
+                "scenario": "Job loss for 3 months",
+                "impact": "description",
+                "survival_time_months": "X",
+                "risk_level": "low/medium/high"
+            }}
+        ]
+    }},
+    "macroeconomic_sensitivity": {{
+        "recession_impact": "low/medium/high",
+        "industry_downturn_sensitivity": "low/medium/high",
+        "interest_rate_hike_impact": "low/medium/high",
+        "most_vulnerable_to": ["factor1", "factor2"]
+    }},
+    "early_warning_signs": [
+        {{
+            "trigger": "what to watch for",
+            "threshold": "specific metric",
+            "action": "recommended action"
+        }}
+    ],
+    "recommendations": {{
+        "risk_mitigation": ["suggestion1", "suggestion2"],
+        "monitoring_focus": ["area1", "area2"]
+    }}
+}}
+
+Return ONLY valid JSON, no other text."""
+    
+    try:
+        print(f"   🔬 Generating detailed risk analysis...")
+        response = llm_service(prompt)
+        
+        # Parse the response
+        risk_analysis = parse_llm_json_response(response)
+        
+        if risk_analysis and isinstance(risk_analysis, dict):
+            print(f"   ✅ Risk analysis generated successfully")
+            return risk_analysis
+        else:
+            print(f"   ⚠️ Failed to parse risk analysis, using fallback")
+            return get_fallback_risk_analysis(features, prediction)
+            
+    except Exception as e:
+        print(f"   ❌ Risk analysis generation failed: {e}")
+        return get_fallback_risk_analysis(features, prediction)
+
+def get_fallback_risk_analysis(features: Dict[str, Any], prediction: Dict[str, Any]) -> Dict[str, Any]:
+    """Provide fallback risk analysis if LLM fails"""
+    
+    employment = features.get('employment_type', 'Unknown')
+    income = features.get('monthly_income', 0)
+    dti = features.get('debt_to_income_ratio', 0.3)
+    
+    return {
+        "professional_risk": {
+            "category": "salaried" if employment == "Salaried" else "self-employed",
+            "industry_health": "stable",
+            "income_stability_score": 70 if employment == "Salaried" else 50,
+            "specific_concerns": ["Income verification needed"] if employment != "Salaried" else ["Single income source"],
+            "future_outlook": "neutral"
+        },
+        "income_trajectory_analysis": {
+            "trend": "stable",
+            "stress_scenarios": [
+                {
+                    "scenario": "10% income drop",
+                    "impact": f"DTI increases to {dti*1.1:.2f}, still manageable",
+                    "risk_level": "low"
+                },
+                {
+                    "scenario": "20% income drop",
+                    "impact": f"DTI becomes {dti*1.2:.2f}, entering moderate risk",
+                    "risk_level": "medium"
+                },
+                {
+                    "scenario": "Job loss for 3 months",
+                    "impact": "Savings would last approximately 2 months",
+                    "survival_time_months": "2",
+                    "risk_level": "high"
+                }
+            ]
+        },
+        "macroeconomic_sensitivity": {
+            "recession_impact": "medium",
+            "industry_downturn_sensitivity": "medium",
+            "interest_rate_hike_impact": "high" if features.get('interest_rate', 0) > 10 else "medium",
+            "most_vulnerable_to": ["Income shock", "Interest rate hike"]
+        },
+        "early_warning_signs": [
+            {
+                "trigger": "Missed EMI on existing loans",
+                "threshold": "1 missed payment",
+                "action": "Immediate collection contact"
+            }
+        ],
+        "recommendations": {
+            "risk_mitigation": [
+                "Consider lower loan amount",
+                "Maintain emergency fund of 6 months EMI"
+            ],
+            "monitoring_focus": [
+                "Income stability",
+                "Industry news"
+            ]
+        }
+    }
 
 
 

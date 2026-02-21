@@ -32,7 +32,9 @@ class UploadResponse(BaseModel):
     files: List[str]
     prediction: Optional[Dict[str, Any]] = None
     features_extracted: int
-    what_if_scenarios: Optional[WhatIfScenarios] = None  # Add this field
+    what_if_scenarios: Optional[Dict[str, Any]] = None
+    risk_analysis: Optional[Dict[str, Any]] = None  # Add this line
+    application_id: Optional[str] = None
 
 class QueryRequest(BaseModel):
     query: str
