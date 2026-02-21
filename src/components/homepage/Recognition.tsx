@@ -70,7 +70,7 @@ export function RecognitionDesk() {
 
     }, []);
 
-    const text = "NoteGraph";
+    const text = "CRED CAT";
 
     return (
         <section className="bg-[#E0DFDC] mainSection  min-h-[100vh] flex flex-col items-center justify-center text-white">
@@ -118,8 +118,7 @@ export function RecognitionDesk() {
                                     <img className="child transition-opacity duration-400 group-hover:opac ity-0 " src="/img/elements/element (11).svg" alt="" />
                                     <div>
                                         <h2 className="   z-1 mt-4 mb-4 fontA font-regular text-2xl md:text-lg 2xl:text-2xl transition-all duration-700 group-hover:tex t-[#F6F1E6]" >Explainability by Design</h2>
-                                        <p className="z-1 font-light text-lg md:text-sm xl:text-lg  poppins mb-3 md-20">Every AI response is generated with internal reasoning paths mapped across sources 
-                                            and relationships—making the system auditable, debuggable, and trustworthy. </p>
+                                        <p className="z-1 font-light text-lg md:text-sm xl:text-lg  poppins mb-3 md-20">Every credit decision includes transparent reasoning across financial, behavioral, and macro signals—making it auditable and regulator-ready. </p>
 
                                     </div>
                                 </div>
@@ -145,8 +144,8 @@ export function RecognitionDesk() {
 
                                     <img className="child transition-opacity duration-400 group-hover:opac ity-0 " src="/img/elements/purple.svg" alt="" />
                                     <div>
-                                        <h2 className=" z-1 mt-8 mb-4 fontA font-regular text-2xl md:text-xl 2xl:text-2xl transition-all duration-700 group-hover:t ext-[#F6F1E6]" >Cognitive Load Optimization</h2>
-                                        <p className="z-1 font-light text-lg md:text-sm 2xl:text-lg poppins">The platform dynamically restructures information to reduce cognitive overload—breaking dense material into manageable concepts, patterns, and memory-friendly representations.</p>
+                                        <h2 className=" z-1 mt-8 mb-4 fontA font-regular text-2xl md:text-xl 2xl:text-2xl transition-all duration-700 group-hover:t ext-[#F6F1E6]" >Behavioral Risk Optimization</h2>
+                                        <p className="z-1 font-light text-lg md:text-sm 2xl:text-lg poppins">The platform dynamically adjusts risk weighting by analyzing behavioral signals, financial stability, and intent indicators—ensuring balanced, context-aware credit decisions.</p>
 
                                     </div>
                                 </div>
@@ -178,8 +177,8 @@ export function RecognitionDesk() {
 
                                     <img className="child transition-opacity duration-400 group-hover:opa city-0 " src="/img/elements/pink.svg" alt="" />
                                     <div>
-                                        <h2 className="   z-1 mt-8 mb-4 fontA font-regular text-2xl md:text-xl 2xl:text-2xl transition-all duration-700 group-hover:t ext-[#F6F1E6]" >Continuously Evolving <br />  Knowledge Base </h2>
-                                        <p className="z-1 font-light text-lg md:text-sm 2xl:text-lg poppins">As users study, revise, and interact, the system refines topic relationships, strengthens weak links, and improves future retrieval—making the knowledge graph smarter over time.</p>
+                                        <h2 className="   z-1 mt-8 mb-4 fontA font-regular text-2xl md:text-xl 2xl:text-2xl transition-all duration-700 group-hover:t ext-[#F6F1E6]" >Continuously Evolving Risk Model </h2>
+                                        <p className="z-1 font-light text-lg md:text-sm 2xl:text-lg poppins">As new applications, conversations, and macro signals emerge, the system continuously refines risk models and improves future decision accuracy.</p>
 
                                     </div>
                                 </div>
@@ -262,7 +261,7 @@ export function RecognitionMob() {
 
     }, []);
 
-    const text = "Recognition";
+    const text = "CREDCAT";
 
     return (
         <section ref={sectionRef}   className="bg-[#E0DFDC]   h-[100vh]   flex flex-col items-center justify-center text-white">
@@ -369,7 +368,7 @@ export function RecognitionMob() {
 
 
 
-export default function https://github.com/dhirajkushwaha/NoteGraphHackathonRecognition() {
+export default function() {
 
 
     return (

@@ -1338,8 +1338,8 @@ export default function Home() {
                       <div className="  flex flex-col items-center">
                         <h1 className="  mt-0  mt-[-80px] sm:mt-0 lg:mt-[-120px]   xl:mt-[0px] z-2 fontA font-medium text-center reveal-text-A px-10 text-5xl sm:text-6xl lg:text-7xl lg:leading-25 ">
                           <div className="hidden lg:flex  gap-5 ">
-                            <span> Engineered For </span>
-                            <span className="text-[#3AFF16]"> Impact</span>
+                            <span> Credit Decisions </span>
+                            <span className="text-[#3AFF16]"> Explained</span>
                           </div>
 
                           <div className=" lg:hidden">
@@ -1361,9 +1361,7 @@ export default function Home() {
                             <br className="md:hidden" /> ● Smarter learning
                           </span> */}
                           <span>
-                            Turn your study material into an intelligent knowledge system <br />
-                            Smart notes ● Graph-based learning
-                            <br className="md:hidden" /> ● Exam-ready insights
+                          AI-powered credit intelligence combining predictive scoring, behavioral analysis, and macro-risk simulation — built for real-world finance.
                           </span>
 
                         </p>
@@ -1464,12 +1462,11 @@ export default function Home() {
                       <div className=" lg:w-[50%] ">
                         <h1 className="fontA font-medium   text-4xl sm:text-6xl">
                           <div className="!hidden  mt-10  reveal-text reveal-text-1  lg:!block">
-                            <span>Where Students</span>
+                            <span>Where Credit Decisions</span>
                             <span>
-                              Meets The{" "}
-                              <span className="text-[#02816B]"> Future</span>{" "}
+                              Meet {" "}
+                              <span className="text-[#02816B]"> Transparency</span>{" "}
                             </span>
-                            <span className="pb-2">Of Learning</span>
                           </div>
 
                           <div className="reveal-text reveal-text-1   lg:!hidden">
@@ -1496,29 +1493,32 @@ export default function Home() {
                             making it hard to see connections or recall key ideas. 
                             NoteGraph solves this by structuring your material into 
                             an AI-powered knowledge graph, helping you navigate concepts visually,
-                             retrieve context fast, and learn more efficiently. */}
+                             retrieve context fast, and learn more efficiently. */} 
 
-                            <span>Modern learning is</span>{" "}
-                            <span className="poppins font-dark text-xxl text-[#888670]">fragmented</span>.
+
+
+
+                            <span>Modern credit scoring is</span>{" "}
+                            <span className="poppins font-dark text-xxl text-[#888670]">opaque.</span>.
                             <br />
 
-                            <span>Too many files.</span>
+                            <span>Black-box approvals.</span>
                             <br />
 
-                            <span>Too many tools.</span>
+                            <span>No behavioral intelligence.</span>
                             <br />
 
-                            <span>Not enough clarity.</span>
+                            <span>Hidden risk signals.</span>
                             <br /><br />
 
-                            <span>NoteGraph brings structure.</span>
+                            <span>We bring explainable intelligence.</span>
                             <br />
 
-                            <span>AI-powered knowledge graphs.</span>
+                            <span>AI-powered risk modeling.</span>
                             <br />
 
-                            <span>Clear connections.</span>{" "}
-                            <span>Instant recall.</span>
+                            <span>Clear decisions.</span>{" "}
+                            <span>Real accountability.</span>
                           </p>
 
                           {/* <p className="poppins font-light text-xl text-[#888580] mt-2 md:mt-6 ">
@@ -1564,10 +1564,10 @@ export default function Home() {
                 <div className="">
                   <h1 className="fontA font-medium text-center text-4xl sm:text-6xl">
                     <div className=" reveal-text  reveal-text-2 mt-10 !hidden lg:!flex lg:flex-col">
-                      <span>Adapting Tech To</span>
+                      <span>Applying AI To</span>
                       <span>
                         {" "}
-                        <span className="text-[#8DC55D]">Optimize</span> Learning 
+                        <span className="text-[#8DC55D]">Optimize</span> Credit Decisions 
                       </span>
                     </div>
                     {/* mobile view */}
@@ -1605,36 +1605,36 @@ export default function Home() {
                                 style={{ lineHeight: "normal" }}
                               >
                                 {" "}
-                                Intelligent <br className="sm:hidden" /> Study Workflows
+                                Intelligent <br className="sm:hidden" /> Risk Workflows 
                               </h2>
                             </div>
                             <h2 className="fontA hidden font-regular mt-3 lg:mt-6 text-[#2a6442] text-3xl sm:text-4xl">
                               Intelligent Study Workflows
                             </h2>
                             <p className="poppins font-light mt-3 lg:w-[90%] text-lg sm:text-lg">
-                              Turn raw study material into structured, reusable knowledge.
-                               NoteGraph helps learners actively process information instead of passively consuming it.
+                              Transform raw financial data into structured, explainable risk insights.
+Our platform actively evaluates behavior, documents, and macro factors
+instead of relying on static credit scores.
                             </p>
 
                             <div className="poppins font-light flex gap-6 flex lg:flex-row mt-4 lg:mt-4 lg:w-[90%] ">
                               <div className="">
                                 <h4 className="text-[#2a6442] font-light text-lg lg:text-xl ">
-                                  Smart notes <br /> & highlights{" "}
+                                  Smart scoring
+                                 <br /> & explanations{" "}
                                 </h4>
                                 <p className="mt-3 font-light text-white ">
-                                  Highlights, summaries, mnemonics,{" "}
-                                  <br className="sm:hidden" /> and flow diagrams generated and linked directly to source content.
-                                </p>
+                                 Risk probabilities, SHAP explanations, behavioral indicators, and
+decision breakdowns generated and linked directly to financial inputs. </p>
                               </div>
 
                               <div className=" ">
                                 <h4 className="text-[#2a6442] text-lg lg:text-xl">
-                                  Knowledge graph  <br />mapping{" "}
+                              Behavioral & macro <br />mapping{" "}
                                 </h4>
                                 <p className="mt-3   text-white ">
-                                  Visual topic maps showing concept relationships,{" "}
-                                  <br className="sm:hidden" /> prerequisites, and learning progress.
-                                 
+                                  Visual risk maps showing financial dependencies, behavioral signals,
+macro exposure, and portfolio impact progression.
                                 </p>
                               </div>
                             </div>
@@ -1678,7 +1678,7 @@ export default function Home() {
                               className="  font-light text-2xl  "
                               style={{ lineHeight: "normal" }}
                             >
-                              Adaptive Learning & Collaboration
+                              Adaptive Credit Intelligence & Human Collaboration
                             </h2>
                           </div>
                           <h2 className="hidden fontA font-regular mt-3 lg:mt-6 text-[#03FFB2] text-3xl sm:text-4xl">
@@ -1686,29 +1686,32 @@ export default function Home() {
                             & Collaboration
                           </h2>
                           <p className="font-light poppins mt-3 lg:w-[90%] text-lg sm:text-lg">
-                            Learning adapts to the user—not the other way around. 
-                            NoteGraph combines collaboration, assessment, and
-                             AI guidance in one focused study space.
+                           Risk analysis adapts to real-world behavior—not static credit scores.
+Our platform combines predictive AI, behavioral signals, and human oversight in one unified decision system.
                           </p>
 
                           <div className="font-light poppins flex  gap-6 mt-4 lg:mt-4">
                             <div>
                               <h4 className="text-[#03FFB2] text-lg lg:text-xl">
-                                Assessments <br /> & practice
+                                Behavioral
+ <br />Risk Analysis
                               </h4>
                               <p className="mt-3 text-white ">
-                                AI-generated quizzes, practice sets, and
-                                 predictive question papers from uploaded material.
+                               AI-analyzed voice patterns, intent signals, and
+psychological indicators extracted from
+applicant conversations.
                               </p>
                             </div>
 
                             <div>
                               <h4 className="text-[#03FFB2] text-lg lg:text-xl">
-                                Shared  <br />Study Room {" "}
+                                Agent
+  <br />Decision Console {" "}
                               </h4>
                               <p className="mt-3 text-white lg:w-[90%] ">
-                                Collaborative spaces with shared notes, 
-                                discussions, and topic-based AI chats.
+                               Unified dashboards combining financial data,
+behavioral risk signals, and explainable
+AI-backed decision insights.
                               </p>
                             </div>
                           </div>
@@ -1747,41 +1750,42 @@ export default function Home() {
                                 className="   font-light text-2xl   "
                                 style={{ lineHeight: "normal" }}
                               >
-                                Multi-Layer Retrieval Architecture
+                                Multi-Layer Explainable AI Architecture
                               </h2>
                             </div>
                             <h2 className="fontA hidden font-regular mt-3 lg:mt-6 text-[#03FFB2] text-3xl sm:text-4xl">
                               Multi-Layer Retrieval<br /> Architecture
                             </h2>
                             <p className="font-light poppins mt-2 lg:w-[90%] text-lg sm:text-lg">
-                              Accurate answers require more than vector search.
-                               NoteGraph uses a multi-layer retrieval system to 
-                               ensure precision, relevance, and explainability.
+                            Accurate credit decisions require more than a traditional score.
+Our platform uses a multi-layer AI system to ensure precision, transparency, and regulatory-grade explainability.
                                
                             </p>
 
                             <div className="poppins font-light flex gap-3 inner-scroll  overflow-scroll sm:overflow-hidden h-[220px] sm:h-fit mt-4  lg:mt-4">
                               <div className="lg:w-[500px]">
                                 <h4 className="text-[#03FFB2]  text-lg lg:text-xl">
-                                 4-layer RAG pipeline
+                                 4-layer Risk Modeling Engine
                                 </h4>
+                                
+
+
+
                                 <p className=" mt-3 text-white ">
-                                  Vector database + Knowledge graph{" "}
+                                 Financial scoring model + Behavioral risk model+{" "}
                                   <br className="hidden lg:block" />
-                                  + BM25 lexical search +{" "}
-                                  <br className="hidden lg:block" />   neural re-rankers.
+                                  Employer & sector analysis +{" "}
+                                  <br className="hidden lg:block" />  Macro stress adjustment engine.
                                 </p>
                               </div>
 
                               <div className="">
                                 <h4 className="text-[#03FFB2]  text-lg lg:text-xl">
-                                  Context-aware retrieval{" "}
+                                 Context-aware Risk Evaluation{" "}
                                 </h4>
                                 <p className=" mt-3 text-white ">
-                                  Combines semantic similarity,
-                                   structural relationships, and{" "}
-                                  <br className="hidden lg:block" />
-                                    keyword relevance before generation.
+                                 Combines financial signals, behavioral intent, and
+macro-economic context before final decision scoring.
                                 </p>
 
                                 {/* <h4 className="text-[#03FFB2]  text-lg lg:text-xl mt-2">
@@ -1868,35 +1872,36 @@ export default function Home() {
                               className="  font-light text-2xl  "
                               style={{ lineHeight: "normal" }}
                             >
-                              Learning Pattern Intelligence
+                              Behavioral & Intent Intelligence
                             </h2>
                           </div>
                           <h2 className="hidden mt-14 sm:mt-0 fontA font-regular mt-3 lg:mt-6 text-[#03FFB2] text-3xl sm:text-4xl">
                             Learning Pattern Intelligence
                           </h2>
                           <p className="poppins  font-light mt-3 md:mt-3 lg:w-[500px] text-lg sm:text-lg">
-                            NoteGraph doesn’t just answer questions—it understands 
-                            how users learn and adapts content accordingly
+                            Our platform doesn’t just score applicants—it understands behavioral intent and adapts risk evaluation accordingly.
                           </p>
 
                           <div className="poppins font-light  flex mt-4 lg:mt-4">
                             <div>
                               <h4 className="text-[#03FFB2] lg:w-[220px] text-lg lg:text-xl">
-                                Learning behavior modeling{" "}
+                                Intent behavior modeling{" "}
                               </h4>
                               <p className="mt-3 text-white lg:w-[260px]  ">
-                                Tracks study patterns, topic difficulty,{" "}, 
-                                revision frequency, and knowledge gaps.
+                                Tracks voice stress levels, response consistency,
+financial literacy signals, and
+behavioral risk indicators..
                               </p>
                             </div>
 
                             <div>
                               <h4 className="text-[#03FFB2] lg:w-[260px] text-lg lg:text-xl">
-                                Cognitive assistance layer
+                              Adaptive risk adjustment layer
                               </h4>
                               <p className="mt-3 text-white ">
-                                Auto-suggests mnemonics, generates mind maps, 
-                                and restructures explanations based on user behavior..
+                               Automatically adjusts risk weighting,
+flags inconsistencies, and
+recalibrates scoring based on behavioral signals.
                               </p>
                             </div>
                           </div>
@@ -2314,7 +2319,7 @@ export default function Home() {
 
                         </div>
 
-                        <span className="  text-4xl lg:text-[7vw] xl:text-[10vh] 2xl:text-[13.5vh]   "> Advantage</span>
+                        <span className="  text-4xl lg:text-[7vw] xl:text-[10vh] 2xl:text-[13.5vh]   ">FORESIGHT</span>
                       </div>
                     </div>
 
@@ -2341,13 +2346,13 @@ export default function Home() {
                         </svg>
 
                       </div>
-                      <h1 className=" md:text-[4vw] xl:text-[8vh] 2xl:text-[10vh]">turn SCATTERED  material</h1>
+                      <h1 className=" md:text-[4vw] xl:text-[8vh] 2xl:text-[10vh]">TURN CREDIT DATA</h1>
                     </div>
 
                     <div className="">
                       <h1 className="textScroll-05  md:text-[4vw] xl:text-[8vh] 2xl:text-[10vh]">
                         into{" "}
-                        <span className="text-[#3AFF16]">connected knowledge,</span>{" "}
+                        <span className="text-[#3AFF16]">EXPLAINABLE INTELLIGENCE,</span>{" "}
                         so
                       </h1>
                     </div>

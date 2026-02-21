@@ -204,7 +204,7 @@ export default function Navbar() {
                         <div className="w-[200px]   ">
                             <a className="h-[54px] CTABUTTON" href="./">
                                 <GlassEffect padding="0rem 0.5rem" >
-                                    <img  className="h-[46px]" src="/img/NoteGraph-logo.png" alt="" />
+                                    <img  className="h-[46px]" src="/img/CredCat-Photoroom.png" alt="" />
                                 </GlassEffect>  
                             </a>
                         </div>
@@ -243,13 +243,13 @@ export default function Navbar() {
                                                 }}
                                                 className="cursor-pointer"
                                             >
-                                                <span className="!text-[#959595]">StudySpace</span>
+                                                <span className="!text-[#959595]">Apply</span>
                                             </button>
                                             <a className="fontA CTABUTTON" href="/about">
-                                                <span className="!text-[#959595] ">StudyForum</span>
+                                                <span className="!text-[#959595] ">AgentConsole</span>
                                             </a>
                                             <a className="fontA CTABUTTON  " href="/contact">
-                                                <span className="!text-[#959595] "> Quizz </span>   
+                                                <span className="!text-[#959595] "> Simulate </span>   
                                             </a>
                                         </div>
                                     </GlassEffect>
