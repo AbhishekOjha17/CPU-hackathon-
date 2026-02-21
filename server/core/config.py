@@ -4,6 +4,9 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+MONGO_URI:str = os.getenv("MONGO_URI", "mongodb://localhost:27017")
+
+
 class Settings(BaseSettings):
     APP_NAME: str = "RAG API"
     APP_VERSION: str = "1.0.0"
@@ -22,6 +25,8 @@ class Settings(BaseSettings):
     CHUNK_SIZE: int = 400
     EMBEDDING_MODEL: str = "all-MiniLM-L6-v2"
     
+    
+
     
     MODEL_DIR: str ="./model"
 
