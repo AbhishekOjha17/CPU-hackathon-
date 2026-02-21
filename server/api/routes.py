@@ -1025,3 +1025,209 @@ async def list_files():
                 "created": os.path.getctime(file_path)
             })
     return {"files": files}
+
+
+
+
+
+
+
+@router.get("/applications")
+async def get_all_applications(limit: int = 50, skip: int = 0):
+    """
+    Fetch all loan applications from MongoDB
+    - limit: maximum number of records to return (default 50)
+    - skip: number of records to skip for pagination (default 0)
+    """
+    try:
+        if db is None:
+            raise HTTPException(status_code=503, detail="MongoDB not connected")
+        
+        # Fetch applications, sort by newest first, exclude MongoDB _id
+        applications = list(db.loan_applications.find(
+            {}, 
+            {"_id": 0}  # Exclude MongoDB internal ID
+        ).sort("created_at", -1).skip(skip).limit(limit))
+        
+        # Get total count for pagination info
+        total_count = db.loan_applications.count_documents({})
+        
+        return {
+            "success": True,
+            "total_count": total_count,
+            "returned_count": len(applications),
+            "skip": skip,
+            "limit": limit,
+            "applications": applications
+        }
+        
+    except Exception as e:
+        print(f"❌ Error fetching applications: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to fetch applications: {str(e)}")
+
+@router.get("/applications/{application_id}")
+async def get_application_by_id(application_id: str):
+    """
+    Fetch a specific loan application by its application_id
+    """
+    try:
+        if db is None:
+            raise HTTPException(status_code=503, detail="MongoDB not connected")
+        
+        application = db.loan_applications.find_one(
+            {"application_id": application_id},
+            {"_id": 0}  # Exclude MongoDB internal ID
+        )
+        
+        if not application:
+            raise HTTPException(status_code=404, detail=f"Application with ID {application_id} not found")
+        
+        return {
+            "success": True,
+            "application": application
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"❌ Error fetching application {application_id}: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to fetch application: {str(e)}")
+    
+    
+    
+@router.post("/predict-direct")
+async def predict_direct(features: Dict[str, Any]):
+    """
+    Directly pass feature values to the ML model and get prediction
+    Accepts a dictionary of feature names and values
+    """
+    try:
+        # Validate that features are provided
+        if not features:
+            raise HTTPException(status_code=400, detail="No features provided")
+        
+        print(f"\n{'='*60}")
+        print(f"🤖 Direct ML Prediction Request")
+        print('='*60)
+        print(f"📊 Received {len(features)} features")
+        
+        # Get the feature list expected by the model
+        expected_features = rag_engine.feature_list if hasattr(rag_engine, 'feature_list') else []
+        
+        if not expected_features:
+            raise HTTPException(status_code=500, detail="Model feature list not available")
+        
+        # Validate and prepare features
+        missing_features = []
+        prepared_features = {}
+        
+        for feature in expected_features:
+            if feature in features:
+                prepared_features[feature] = features[feature]
+            else:
+                missing_features.append(feature)
+                # Set default values based on feature type
+                if feature in ["gender", "marital_status", "education_level", "loan_purpose", 
+                             "employment_type", "income_verification_status", "property_area",
+                             "home_ownership_status", "application_channel", "occupation_type",
+                             "loan_type", "property_ownership_status", "urban_rural_indicator"]:
+                    prepared_features[feature] = "Unknown"
+                elif feature in ["fraud_flag", "past_default_flag", "has_credit_card_flag", 
+                               "email_domain_risk_flag"]:
+                    prepared_features[feature] = 0
+                else:
+                    prepared_features[feature] = 0.0
+        
+        if missing_features:
+            print(f"⚠️ Missing {len(missing_features)} features: {missing_features[:10]}...")
+            print(f"   Using default values for missing features")
+        
+        # Set the features in rag_engine temporarily
+        original_features = rag_engine.extracted_features
+        rag_engine.extracted_features = prepared_features
+        
+        # Get prediction
+        prediction = rag_engine.predict_loan_risk()
+        
+        # Restore original features
+        rag_engine.extracted_features = original_features
+        
+        print(f"\n📊 Prediction Result:")
+        print(f"   • Risk Level: {prediction.get('risk_level', 'Unknown')}")
+        print(f"   • Confidence: {prediction.get('confidence', 0):.2%}")
+        print(f"   • Features Used: {len(prepared_features)}")
+        print(f"   • Missing Features: {len(missing_features)}")
+        print('='*60)
+        
+        return {
+            "success": True,
+            "prediction": prediction,
+            "features_used": len(prepared_features),
+            "features_missing": len(missing_features),
+            "missing_features_list": missing_features[:20] if missing_features else [],
+            "note": "Default values were used for missing features" if missing_features else None
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"❌ Direct prediction failed: {e}")
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Prediction failed: {str(e)}")
+
+@router.post("/predict-batch")
+async def predict_batch(features_list: List[Dict[str, Any]]):
+    """
+    Batch prediction - pass multiple sets of features
+    """
+    try:
+        if not features_list:
+            raise HTTPException(status_code=400, detail="No features provided")
+        
+        print(f"\n{'='*60}")
+        print(f"🤖 Batch ML Prediction Request")
+        print('='*60)
+        print(f"📊 Received {len(features_list)} feature sets")
+        
+        results = []
+        original_features = rag_engine.extracted_features
+        
+        for idx, features in enumerate(features_list):
+            try:
+                # Set features temporarily
+                rag_engine.extracted_features = features
+                
+                # Get prediction
+                prediction = rag_engine.predict_loan_risk()
+                
+                results.append({
+                    "index": idx,
+                    "success": True,
+                    "prediction": prediction
+                })
+                
+            except Exception as e:
+                results.append({
+                    "index": idx,
+                    "success": False,
+                    "error": str(e)
+                })
+        
+        # Restore original features
+        rag_engine.extracted_features = original_features
+        
+        # Count successes
+        successes = sum(1 for r in results if r.get("success"))
+        
+        return {
+            "success": True,
+            "total": len(results),
+            "successful": successes,
+            "failed": len(results) - successes,
+            "results": results
+        }
+        
+    except Exception as e:
+        print(f"❌ Batch prediction failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Batch prediction failed: {str(e)}")
