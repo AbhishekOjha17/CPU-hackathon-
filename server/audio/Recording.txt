@@ -1,0 +1,4 @@
+[0.0 2.5] Hello, how can I help you today?
+[2.5 5.0] I'm interested in getting a loan for a new car.
+[5.0 8.2] That's great. What's your current credit score?
+[8.2 12.0] I think it's around 720, but I'm not completely sure.
